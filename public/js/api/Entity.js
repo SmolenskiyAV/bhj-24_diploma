@@ -13,22 +13,15 @@ class Entity {
    * */
   static list(data, callback){
 
-    data.mail = mail;
-    data.password = password;
-
-    createRequest(this.URL, data, 'GET', // отправка запроса 'GET' на сервер по адресу 'URL'
-      function(err, response) { // функция callback объекта createRequest
-        if (err === 'OK') {
-          console.log( err ); 
-          console.log('Данные запроса:', response);
-        } else {
-          console.log('Ошибка запроса: ', err); // объект ошибки
-        };
-      }
-    );
+    createRequest({
+      url: this.URL,
+      method: 'GET',
+      responseType: 'json',
+      data,  
+      callback  
+    });
     
-    callback = createRequest.bind(this); // передача контекста this изнутри createRequest внутрь текущей функции callback (метода Entity.list)
-    callback(err, response); // передача параметров err и response из объекта createRequest внутрь текущей функции callback (метода Entity.list)
+    callback(err, response); 
   };
   /**
    * Создаёт счёт или доход/расход с помощью запроса
@@ -37,21 +30,15 @@ class Entity {
    * */
   static create(data, callback) {
 
-    data.mail = mail;
-
-    createRequest(this.URL, data, 'PUT', // отправка запроса 'PUT' на сервер по адресу 'URL'
-      function(err, response) { // функция callback объекта createRequest
-        if (err === 'OK') {
-          console.log( err ); 
-          console.log('Данные запроса:', response);
-        } else {
-          console.log('Ошибка запроса: ', err); // объект ошибки
-        };
-      }
-    );
+    createRequest({
+      url: this.URL,
+      method: 'PUT',
+      responseType: 'json',
+      data,  
+      callback  
+    });
     
-    callback = createRequest.bind(this); // передача контекста this изнутри createRequest внутрь текущей функции callback (метода Entity.create)
-    callback(err, response); // передача параметров err и response из объекта createRequest внутрь текущей функции callback (метода Entity.create)
+    callback(err, response); 
   }
 
   /**
@@ -60,21 +47,15 @@ class Entity {
    * */
   static remove(data, callback ) {
 
-    data.mail = mail;
-
-    createRequest(this.URL, data, 'DELETE', // отправка запроса 'DELETE' на сервер по адресу 'URL'
-      function(err, response) { // функция callback объекта createRequest
-        if (err === 'OK') {
-          console.log( err ); 
-          console.log('Данные запроса:', response);
-        } else {
-          console.log('Ошибка запроса: ', err); // объект ошибки
-        };
-      }
-    );
+    createRequest({
+      url: this.URL,
+      method: 'DELET',
+      responseType: 'json',
+      data,  
+      callback  
+    });
     
-    callback = createRequest.bind(this); // передача контекста this изнутри createRequest внутрь текущей функции callback (метода Entity.remove)
-    callback(err, response); // передача параметров err и response из объекта createRequest внутрь текущей функции callback (метода Entity.remove)
+    callback(err, response); 
 
   };
 };

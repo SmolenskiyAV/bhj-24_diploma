@@ -42,24 +42,18 @@ class User {
    * */
   static fetch(callback) {
 
-    createRequest(this.URL + '/current', data, 'GET', // отправка запроса 'GET' на сервер по адресу 'URL/current'
-      function(err, response) { // функция callback объекта createRequest
-        if (err === 'OK') {
-          console.log( err ); 
-          console.log('Данные запроса:', response);
-        } else {
-          console.log('Ошибка запроса: ', err); // объект ошибки
-        };
+    createRequest({
+      url: this.URL + '/current',
+      method: 'GET',
+      responseType: 'json',
+      data: this.current(),  
+      callback: (err, response) => {
+        if ((this.current().name) && (response.user.name)) this.setCurrent(response.user.name); // данные о текущем пользователе есть. обновить данные текущего пользователя
+        if (!response.success) this.unsetCurrent(); // данных о пользователе нет. удалить запись об авторизации
       }
-    );
+    });
     
-    callback = createRequest.bind(this); // передача контекста this изнутри createRequest внутрь текущей функции callback (метода User.fetch)
-    callback = (err, response) => { // запуск текущей функции callback (метода User.fetch) с передачей внутрь неё параметров err и response из объекта createRequest  
-
-      if ((this.current().name) && (response.user.name)) this.setCurrent(response.user.name); // данные о текущем пользователе есть. обновить данные текущего пользователя
-
-      if (!response.success) this.unsetCurrent(); // данных о пользователе нет. удалить запись об авторизации
-    };
+    callback(err, response); 
   };
 
   /**
@@ -91,24 +85,17 @@ class User {
    * */
   static register(data, callback) {
 
-    createRequest(this.URL + '/register', data, 'POST', // отправка запроса 'POST' на сервер по адресу 'URL/register'
-      function(err, response) { // функция callback объекта createRequest
-        if (err === 'OK') {
-          console.log( err ); 
-          console.log('Данные запроса:', response);
-        } else {
-          console.log('Ошибка запроса: ', err); // объект ошибки
-        };
+    createRequest({
+      url: this.URL + '/register',
+      method: 'POST',
+      responseType: 'json',
+      data,  
+      callback: (err, response) => {
+        if ((response.success) && (response.user.name)) this.setCurrent(response.user.name); // данные о текущем пользователе есть. обновить данные текущего пользователя
       }
-    );
-
-    callback = createRequest.bind(this); // передача контекста this изнутри createRequest внутрь текущей функции callback (метода User.register)
-    callback = (err, response) => { // запуск текущей функции callback (метода User.register) с передачей внутрь неё параметров err и response из объекта createRequest  
-
-      if ((response.success) && (response.user.name)) this.setCurrent(response.user.name); // данные о текущем пользователе есть. обновить данные текущего пользователя
-     
-    };
-
+    });
+    
+    callback(err, response); 
   };
 
   /**
@@ -117,24 +104,16 @@ class User {
    * */
   static logout(callback) {
 
-    createRequest(this.URL + '/logout', data, 'POST', // отправка запроса 'POST' на сервер по адресу 'URL/logout'
-      function(err, response) { // функция callback объекта createRequest
-        if (err === 'OK') {
-          console.log( err ); 
-          console.log('Данные запроса:', response);
-        } else {
-          console.log('Ошибка запроса: ', err); // объект ошибки
-        };
+    createRequest({// отправка запроса 'POST' на сервер по адресу 'URL/logout'
+      url: this.URL + '/logout',
+      method: 'POST',
+      responseType: 'json',
+      data: this.current(),  
+      callback: (err, response) => {
+        if (response.success) this.unsetCurrent(); // данные о текущем пользователе есть. обновить данные текущего пользователя
       }
-    );
-
-    callback = createRequest.bind(this); // передача контекста this изнутри createRequest внутрь текущей функции callback (метода User.logout)
-    callback = (err, response) => { // запуск текущей функции callback (метода User.logout) с передачей внутрь неё параметров err и response из объекта createRequest  
-
-      if (response.success) this.unsetCurrent(); // данные о текущем пользователе есть. обновить данные текущего пользователя
-     
-    };
-
-
-  }
-}
+    });
+    
+    callback(err, response); 
+  };
+};

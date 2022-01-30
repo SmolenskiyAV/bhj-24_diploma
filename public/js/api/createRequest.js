@@ -1,19 +1,28 @@
-const { response } = require("express");
-const { send } = require("express/lib/response");
+//const { response } = require("express");
+//const { send } = require("express/lib/response");
 
 /**
  * Основная функция для совершения запросов
  * на сервер.
  * */
+
 const createRequest = (options = {}) => {
     //передаём в createRequest три аргумента: адрес, data, method и функцию callback
     options.url = url;
-    options.data = {
-        email:email,
-        password:password
-    };
     options.method = method;
-    options.callback = callback(err, response);
+    options.responseType = responseType;
+    options.data = {
+        //email:email,
+        //password:password
+    };
+    options.callback = callback = (err, response) =>{
+        if (err === 'OK') {
+            console.log( err ); 
+            console.log('Данные запроса:', response);
+            } else {
+                console.log('Ошибка запроса: ', err); // объект ошибки
+            };
+    }
 
     let xhr =new XMLHttpRequest();
 
@@ -37,27 +46,15 @@ const createRequest = (options = {}) => {
 
         }
 
-        xhr.responseType = 'json'; // формат, в котором необходимо выдать результат
+        xhr.responseType = responseType; // формат, в котором необходимо выдать результат
 
-        callback(xhr.statusText, xhr.response); // передача в функцию callback текущих параметров ответа сервера
-            
-        }
+        callback(xhr.statusText, xhr.response);
+    
+    }
     catch (e) {
         callback(e);
     };
 };
-
-
-createRequest(url, data, method, 
-    function(err, response) {// функция callback
-        if (err === 'OK') {
-        console.log( err ); 
-        console.log('Данные запроса:', response);
-        } else {
-            console.log('Ошибка запроса: ', err); // объект ошибки
-        };
-    }
-);
 
 
     
