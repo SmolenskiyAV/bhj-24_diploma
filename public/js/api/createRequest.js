@@ -8,9 +8,10 @@
 
 const createRequest = (options = {}) => {
     //передаём в createRequest три аргумента: адрес, data, method и функцию callback
-    options.url = url;
-    options.method = method;
-    options.responseType = responseType;
+    
+    let url = options.url;
+    let method = options.method;
+    let responseType = options.responseType;
     options.data = {
         //email:email,
         //password:password
@@ -18,9 +19,9 @@ const createRequest = (options = {}) => {
     options.callback = callback = (err, response) =>{
         if (err === 'OK') {
             console.log( err ); 
-            console.log('Данные запроса:', response);
+            console.log('Данные запроса:' + response);
             } else {
-                console.log('Ошибка запроса: ', err); // объект ошибки
+                console.log('Ошибка запроса: ' + err); // объект ошибки
             };
     }
 
@@ -31,7 +32,8 @@ const createRequest = (options = {}) => {
 
         if (method === 'GET') { 
             // отправка GET-запроса
-            url.searchParams.set('email', data.email, 'password', data.password) // передача логина и пароля в качестве доп.параметров url-а        
+            //url.searchParams.set('email', data.email, 'password', data.password) // передача логина и пароля в качестве доп.параметров url-а        
+            url.searchParams.set(data); // такая запись в качестве может считаться УНИВЕРСАЛЬНЫМ ВАРИАНТОМ???
             xhr.open(method, url); // адрес запроса
             xhr.send();
             

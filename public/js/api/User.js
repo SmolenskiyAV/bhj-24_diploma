@@ -50,10 +50,9 @@ class User {
       callback: (err, response) => {
         if ((this.current().name) && (response.user.name)) this.setCurrent(response.user.name); // данные о текущем пользователе есть. обновить данные текущего пользователя
         if (!response.success) this.unsetCurrent(); // данных о пользователе нет. удалить запись об авторизации
+      callback(err, response); 
       }
     });
-    
-    callback(err, response); 
   };
 
   /**
