@@ -28,25 +28,36 @@ const createRequest = (options = {}) => {
     let xhr =new XMLHttpRequest();
 
     try {
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); 
-
+        
         if (method === 'GET') { 
             // отправка GET-запроса
-            //url.searchParams.set('email', data.email, 'password', data.password) // передача логина и пароля в качестве доп.параметров url-а        
-            url.searchParams.set(data); // такая запись в качестве может считаться УНИВЕРСАЛЬНЫМ ВАРИАНТОМ???
+
+            //url.searchParams.set('email', data.email, 'password', data.password) // ЦЕЛЕВОЙ ФОРМАТ. Передача логина и пароля в качестве доп.параметров url-а        
+            
+            let urlParamsGet = ''; //строка, которую передаём в качестве параметров url: 'имя свойства , значение свойства , ...'
+            
+            for (let option of options.data) { // "собираем" строку из свойств объекта data, перебирая его свойства (количество которых мы заранее не знаем)
+                urlParamsGet = urlParamsGet + Object.keys(option) + ',' + option[Object.keys(option)] + ',';
+            };
+
+            url.searchParams.set(urlParamsGet); // вставляем строку " 'email', data.email, 'password', data.password, " в доп.параметры url
             xhr.open(method, url); // адрес запроса
             xhr.send();
-            
+                        
         } else {
             // отправка неGET-запрса
+
             formData = new FormData;
-            formData.append( 'mail', data.email );
-            formData.append( 'password', data.password );
- 
+
+            for (let option of options.data) { // перебираем свойства объекта data (количество которых мы заранее не знаем)
+                formData.append( `'${Object.keys(option)}'`, option[Object.keys(option)]); //добовляем в форму значения из каждого перебираемого свойства data
+            };
+
             xhr.open( method, url ); // адрес запроса
             xhr.send(formData);   // передача данных из формы
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //определяем заголовок после запроса
 
-        }
+        };
 
         xhr.responseType = responseType; // формат, в котором необходимо выдать результат
 
