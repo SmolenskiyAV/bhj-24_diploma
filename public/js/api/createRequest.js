@@ -36,10 +36,11 @@ const createRequest = (options = {}) => {
             
             let urlParamsGet = ''; //строка, которую передаём в качестве параметров url: 'имя свойства , значение свойства , ...'
             
-            for (let option of options.data) { // "собираем" строку из свойств объекта data, перебирая его свойства (количество которых мы заранее не знаем)
+            for (let option in options.data) { // "собираем" строку из свойств объекта data, перебирая его свойства (количество которых мы заранее не знаем)
                 urlParamsGet = urlParamsGet + Object.keys(option) + ',' + option[Object.keys(option)] + ',';
             };
-
+            urlParamsGet = 'http://localhost:8000' + urlParamsGet; // дополняем адрес значением пути к серверу
+            console.log(urlParamsGet); //КОНТРОЛЬНАЯ ТОЧКА
             url.searchParams.set(urlParamsGet); // вставляем строку " 'email', data.email, 'password', data.password, " в доп.параметры url
             xhr.open(method, url); // адрес запроса
             xhr.send();
@@ -49,7 +50,7 @@ const createRequest = (options = {}) => {
 
             formData = new FormData;
 
-            for (let option of options.data) { // перебираем свойства объекта data (количество которых мы заранее не знаем)
+            for (let option in options.data) { // перебираем свойства объекта data (количество которых мы заранее не знаем)
                 formData.append( `'${Object.keys(option)}'`, option[Object.keys(option)]); //добовляем в форму значения из каждого перебираемого свойства data
             };
 
