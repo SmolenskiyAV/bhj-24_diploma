@@ -9,50 +9,42 @@
 const createRequest = (options = {}) => {
     //передаём в createRequest три аргумента: адрес, data, method и функцию callback
     
-    let url ='http://localhost:8000' + `${options.url}`; //добавляем в адрес, переданный в данную функцию createRequest, путь к локальному серверу
+    let url = options.url;
     let method = options.method;
-    let responseType = options.responseType;
-    options.data = {
-        //email:email,
-        //password:password
-    };
-    options.callback = callback = (err, response) =>{
-        if (err === 'OK') {
-            console.log( err ); 
-            console.log('Данные запроса:' + response);
-            } else {
-                console.log('Ошибка запроса: ' + err); // объект ошибки
-            };
-    }
-
     let xhr =new XMLHttpRequest();
+
+    xhr.addEventListener('readystatechange', function(){ // "вешаем" обработчик события на получение состояний запроса после его отправки на сервер
+        if(xhr.readyState === 4 && xhr.status == 200){  // если отправка пакета успешна..
+            console.log(xhr)    // выводим в консоль тело запроса
+            options.callback(null, JSON.parse(xhr.response))    // и передаём в функцию callback 2 параметра: null вместо кода ошибки; ответ сервера(преобразованный в объект) на отправленный ему запрос xhr  
+        }
+    })
 
     try {
         
         if (method === 'GET') { 
             // отправка GET-запроса
 
-            //url.searchParams.set('email', data.email, 'password', data.password) // ЦЕЛЕВОЙ ФОРМАТ. Передача логина и пароля в качестве доп.параметров url-а        
+            //ЦЕЛЕВОЙ ФОРМАТ. Передача логина и пароля в качестве доп.параметров url-а   'https://localhost:8000/.../?mail=ivan@biz.pro&password=odinodin'     
             
-            let urlParamsGet = ''; //строка, которую передаём в качестве параметров url: 'имя свойства , значение свойства , ...'
-            
-            for (let option in options.data) { // "собираем" строку из свойств объекта data, перебирая его свойства (количество которых мы заранее не знаем)
-                urlParamsGet = urlParamsGet + Object.keys(option) + ',' + option[Object.keys(option)] + ',';
+            url += '?'; // добавляем к адресу разделитель для параметров
+
+            for (let option in options.data) { // перебираем свойства объекта data (количество которых мы заранее не знаем)
+                url += option + '=' + options.data[option] + '&'; // "собираем" строку адреса с параметрами запроса
             };
+
+            url = url.slice(0, -1); // отрезаем лишний амперсанд в конце собранной строки (оставшийся после "сборки")  
             
-                console.log('urlParamsGet=' + urlParamsGet); //КОНТРОЛЬНАЯ ТОЧКА!
-                console.log('url= ' + url); //КОНТРОЛЬНАЯ ТОЧКА!    
-            url.searchParams.set(urlParamsGet); // вставляем строку " 'email', data.email, 'password', data.password, " в доп.параметры url
-            xhr.open(method, url); // адрес запроса
-            xhr.send();
-                     
+            xhr.open( method, url ); // адрес запроса
+            xhr.send();    
+        
         } else {
             // отправка неGET-запрса
 
             formData = new FormData;
 
             for (let option in options.data) { // перебираем свойства объекта data (количество которых мы заранее не знаем)
-                formData.append( `'${Object.keys(option)}'`, option[Object.keys(option)]); //добовляем в форму значения из каждого перебираемого свойства data
+                formData.append( option, option.data[option]); //добовляем в форму значения из каждого перебираемого свойства data
             };
             
             xhr.open( method, url ); // адрес запроса
@@ -61,13 +53,11 @@ const createRequest = (options = {}) => {
 
         };
 
-        xhr.responseType = responseType; // формат, в котором необходимо выдать результат
+        xhr.responseType = options.responseType; // формат, в котором необходимо выдать результат
 
-        callback(xhr.statusText, xhr.response);
-    
     }
     catch (e) {
-        callback(e);
+        options.callback(e); // в случ.ошибки запроса - передаём в callback код ошибки
     };
 };
 
